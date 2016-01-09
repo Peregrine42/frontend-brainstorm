@@ -1,0 +1,33 @@
+@panel-open
+.inspector {
+  height: 70px;
+}
+
+@panel-open
+.container {
+  top: 70px;
+}
+
+@click
+.input-box {
+  focus: true;
+}
+
+.money_scope {
+  curreny_unit: "£"
+}
+
+@click->@processed-click
+.money_scope {
+  as_money: money_scope.currency_unit + event.value;
+}
+
+@click->@processed-click
+._event {
+  new_event_attribute: 5 + _event.x;
+}
+
+@processed-click
+.input-box#name{
+  value: _event.using_scope
+}
