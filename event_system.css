@@ -29,5 +29,5 @@
 
 @processed-click
 .input-box#name{
-  value: _event.using_scope
+  value: _event.new_event_attribute
 }

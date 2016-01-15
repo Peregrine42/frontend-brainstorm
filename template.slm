@@ -1,0 +1,3 @@
+ul
+  - for(var i = 0; i < e.history.length; i++)
+    li = e.history[i]

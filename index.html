@@ -1,0 +1,29 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+  <div id="container">foo</div>
+</body>
+
+<script src="aight.js"></script>
+<script src="domchanger.js"></script>
+
+<script>
+// Defining the component
+function HelloMessage() {
+  return { render: render };
+  function render(name) {
+    return ["div", "Hello " + name];
+  }
+}
+
+// Creating a instance attached to document.body
+var instance = domChanger(HelloMessage, document.body);
+// Send in the initial data to render.
+instance.update("Tim");
+</script>
+
+</html>
