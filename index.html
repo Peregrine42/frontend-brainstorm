@@ -42,7 +42,7 @@ function TodoApp(emit, refresh) {
         }],
         ["button", { klass: "foo" }, "Add #", items.length + 1]
       ],
-      [ TodoList.bind(null, refresh), items ]
+      [TodoList.bind(null, refresh), items]
     ];
   }
 
@@ -94,9 +94,9 @@ function TodoItem(array, index, refresh) {
       [
         [
           "input", {
-            onchange: itemOnChange.bind(null, refresh, array),
-            onfocus: itemOnFocus,
-            onblur: itemOnBlur,
+            onchange: itemOnChange.bind(null, refresh, array, index),
+            onblur: itemOnBlur.bind(null, index),
+            onkeypress: itemOnKeyPress.bind(null, refresh, array, index),
             klass: "foo input",
             value: array[index],
             style: { display: active ? "inherit" : "none" }
@@ -122,19 +122,28 @@ function TodoItem(array, index, refresh) {
     }, 50);
   }
 
-  function itemOnChange(refresh, array, evt) {
+  function itemOnChange(refresh, array, index, evt) {
     array[index] = evt.target.value
     refresh();
   }
 
-  function itemOnFocus(evt) {
+  function itemOnKeyPress(refresh, array, index, evt) {
+    var text = $(".input")[index].value;
+
+    if (evt.keyCode == 13) {
+      if (text !== "") {
+        array[index] = text;
+        active = false;
+        refresh();
+      };
+    };
   }
 
-  function itemOnBlur(evt) {
+  function itemOnBlur(index, evt) {
     active = false;
     refresh();
     setTimeout(function() {
-      $("#input").select();
+      $(".input")[index].select();
     }, 50);
   }
 }
