@@ -19,18 +19,19 @@
 </style>
 
 <script src="aight.js"></script>
+<script src="jquery-1.12.0.js"></script>
 <script src="domchanger.js"></script>
 
 <script>
 function TodoApp(emit, refresh) {
-  var items = [], text = "";
+  var items = [];
+  var text = "";
 
   return { render: render };
 
   function render() {
     return ["div",
       ["h1", "TODO"],
-      [TodoList, items],
       ["form", { onsubmit: handleSubmit },
         ["input", {
           onchange: onChange,
@@ -40,7 +41,8 @@ function TodoApp(emit, refresh) {
           klass: "foo"
         }],
         ["button", { klass: "foo" }, "Add #", items.length + 1]
-      ]
+      ],
+      [ TodoList.bind(null, refresh), items ]
     ];
   }
 
@@ -71,12 +73,69 @@ function TodoApp(emit, refresh) {
   }
 }
 
-function TodoList() {
+function TodoList(refresh) {
+  var refresh = refresh;
   return { render: render };
   function render(items) {
-    return ["ul", items.map(function (itemText) {
-      return ["li", { klass: "foo" }, itemText];
+    return ["ul", items.map(function (itemText, index) {
+      return [ TodoItem.bind(null, items, index, refresh), itemText ]
     })];
+  }
+}
+
+function TodoItem(array, index, refresh) {
+  var active = false;
+  var index = index;
+  var array = array;
+  var refresh = refresh;
+  return { render: render };
+  function render(text) {
+    return ["div",
+      [
+        [
+          "input", {
+            onchange: itemOnChange.bind(null, refresh, array),
+            onfocus: itemOnFocus,
+            onblur: itemOnBlur,
+            klass: "foo input",
+            value: array[index],
+            style: { display: active ? "inherit" : "none" }
+          }
+        ],
+        [
+          "span", {
+            klass: "foo",
+            onclick: itemOnClick.bind(null, refresh, index),
+            style: { display: !active ? "inherit" : "none" }
+          },
+          text
+        ]
+      ]
+    ]
+  }
+
+  function itemOnClick(refresh, index, evt) {
+    active = true;
+    refresh();
+    setTimeout(function() {
+      $(".input")[index].select();
+    }, 50);
+  }
+
+  function itemOnChange(refresh, array, evt) {
+    array[index] = evt.target.value
+    refresh();
+  }
+
+  function itemOnFocus(evt) {
+  }
+
+  function itemOnBlur(evt) {
+    active = false;
+    refresh();
+    setTimeout(function() {
+      $("#input").select();
+    }, 50);
   }
 }
 
