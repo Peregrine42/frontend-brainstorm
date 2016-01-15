@@ -341,7 +341,10 @@ function processTag(array) {
     var keys = Object.keys(array[1]);
     for (var i = 0, l = keys.length; i < l; i++) {
       var key = keys[i];
-      props[key] = array[1][key];
+      var dom_key;
+      if (key === "klass") { dom_key = "class" }
+      else { dom_key = key };
+      props[dom_key] = array[1][key];
     }
     body = array.slice(2);
   }
@@ -359,10 +362,10 @@ function processTag(array) {
   if (classes) {
     classes = classes.map(stripFirst).join(" ");
     if (props.klass) {
-      props.klass += " " + classes;
+      props["class"] += " " + classes;
     }
     else {
-      props.klass = classes;
+      props["class"] = classes;
     };
   }
   var id = string.match(ID_MATCH);
