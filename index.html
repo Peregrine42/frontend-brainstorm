@@ -5,7 +5,11 @@
 </head>
 
 <body>
-  <div id="container">foo</div>
+  <div id="container">
+    <span id="no-js">
+      Javascript not fully supported - please upgrade your browser!
+    </span>
+  </div>
 </body>
 
 <style>
@@ -25,7 +29,7 @@ function TodoApp(emit, refresh) {
 
   function render() {
     return ["div",
-      ["h3", "TODO"],
+      ["h1", "TODO"],
       [TodoList, items],
       ["form", { onsubmit: handleSubmit },
         ["input", {
@@ -35,7 +39,7 @@ function TodoApp(emit, refresh) {
           id: "input",
           klass: "foo"
         }],
-        ["button", "Add #", items.length + 1]
+        ["button", { klass: "foo" }, "Add #", items.length + 1]
       ]
     ];
   }
@@ -71,12 +75,13 @@ function TodoList() {
   return { render: render };
   function render(items) {
     return ["ul", items.map(function (itemText) {
-      return ["li", itemText];
+      return ["li", { klass: "foo" }, itemText];
     })];
   }
 }
 
-domChanger(TodoApp, document.body).update()
+domChanger(TodoApp, document.getElementById("container")).update()
+document.getElementById("no-js").remove();
 </script>
 
 </html>
