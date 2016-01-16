@@ -8,6 +8,10 @@
     * {
       behavior: url(PIE.htc);
     }
+
+    input {
+      height: 33px;
+    }
   </style>
 </head>
 
@@ -41,8 +45,7 @@ function TodoApp(emit, refresh) {
             onchange: onChange,
             onkeypress: onKeyPress,
             value: text,
-            id: "input",
-            klass: "foo pure-input-4"
+            klass: "pure-input-4"
           }],
           ["input", {
             klass: "pure-button pure-button-primary",
@@ -119,14 +122,13 @@ function TodoItem(array, index, refresh) {
             onchange: itemOnChange.bind(null, refresh, array, index),
             onblur: itemOnBlur.bind(null, index),
             onkeypress: itemOnKeyPress.bind(null, refresh, array, index),
-            klass: "foo input",
+            klass: "input",
             value: array[index],
             style: { display: active ? "inherit" : "none" }
           }
         ],
         [
           "span", {
-            klass: "foo",
             onclick: itemOnClick.bind(null, refresh, index),
             style: { display: !active ? "inherit" : "none" }
           },
