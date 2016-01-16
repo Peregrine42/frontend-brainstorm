@@ -2,6 +2,13 @@
 
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+  <style>
+    * {
+      behavior: url(PIE.htc);
+    }
+  </style>
 </head>
 
 <body>
@@ -12,13 +19,9 @@
   </div>
 </body>
 
-<style>
-.foo {
-  font-size: 20px;
-}
-</style>
 
 <script src="aight.js"></script>
+<script src="html5shiv.js"></script>
 <script src="jquery-1.12.0.js"></script>
 <script src="domchanger.js"></script>
 
@@ -30,17 +33,23 @@ function TodoApp(emit, refresh) {
   return { render: render };
 
   function render() {
-    return ["div",
+    return ["div", { klass: "row" },
       ["h1", "TODO"],
-      ["form", { onsubmit: handleSubmit },
-        ["input", {
-          onchange: onChange,
-          onkeypress: onKeyPress,
-          value: text,
-          id: "input",
-          klass: "foo"
-        }],
-        ["button", { klass: "foo" }, "Add #", items.length + 1]
+      ["form", { onsubmit: handleSubmit, klass: "pure-form" },
+        ["fieldset",
+          ["input", {
+            onchange: onChange,
+            onkeypress: onKeyPress,
+            value: text,
+            id: "input",
+            klass: "foo pure-input-4"
+          }],
+          ["input", {
+            klass: "pure-button pure-button-primary",
+            type: "submit",
+            value: "Add #" + (items.length + 1)
+          }]
+        ]
       ],
       [TodoList.bind(null, refresh), items]
     ];
@@ -77,9 +86,22 @@ function TodoList(refresh) {
   var refresh = refresh;
   return { render: render };
   function render(items) {
-    return ["ul", items.map(function (itemText, index) {
-      return [ TodoItem.bind(null, items, index, refresh), itemText ]
-    })];
+    return [
+      "table",
+      {klass: "pure-table pure-table-horizontal"}, [
+        "thead", [
+          "tr", [
+            "th", "list"
+          ]
+        ]
+      ],
+      [ "tbody", [
+          items.map(function (itemText, index) {
+            return [ TodoItem.bind(null, items, index, refresh), itemText ]
+          })
+        ]
+      ]
+    ];
   }
 }
 
@@ -90,9 +112,9 @@ function TodoItem(array, index, refresh) {
   var refresh = refresh;
   return { render: render };
   function render(text) {
-    return ["div",
+    return ["tr", { klass: (index % 2 == 0) ? "" : "pure-table-odd"},
       [
-        [
+        ["td", [
           "input", {
             onchange: itemOnChange.bind(null, refresh, array, index),
             onblur: itemOnBlur.bind(null, index),
@@ -109,7 +131,7 @@ function TodoItem(array, index, refresh) {
             style: { display: !active ? "inherit" : "none" }
           },
           text
-        ]
+        ] ]
       ]
     ]
   }

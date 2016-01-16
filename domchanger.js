@@ -145,6 +145,7 @@ function createComponent(component, parent, owner) {
       // Handle tag nodes
       else if (newItem.tagName) {
         // Create a new item if there isn't one
+        var pending = false;
         if (!item) {
           item = oldTree[key] = {
             tagName: newItem.tagName,
@@ -155,16 +156,33 @@ function createComponent(component, parent, owner) {
             item.ref = newItem.ref;
             refs[item.ref] = item.el;
           }
-          top.appendChild(item.el);
+          pending = true;
+          // top.appendChild(item.el);
           // console.log("created")
         }
         // Update the tag
         if (!item.props) item.props = {};
+        if (!newItem.props) newItem.props = {};
+        if (pending == true) {
+          if (newItem.props["type"]) {
+            var type = newItem.props["type"];
+            if (newItem.tagName === "input") {
+              var input = $("<input type=" + type + "></input>")[0];
+              top.appendChild(input);
+              console.log(input);
+              item.el = input;
+            }
+          } else {
+            top.appendChild(item.el);
+          }
+        }
         updateAttrs(item.el, newItem.props, item.props);
 
         if (newItem.children) {
           apply(item.el, newItem.children, item.children);
         }
+
+        // if (pending == true) { top.appendChild(item.el); }
       }
 
       // Handle component nodes
@@ -451,6 +469,9 @@ function updateAttrs(node, attrs, old) {
     else if (typeof value === "boolean") {
       if (value) node.setAttribute(key, key);
       else node.removeAttribute(key);
+    }
+    else if (key === 'type') {
+      
     }
     // handle normal attribute
     else {
