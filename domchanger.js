@@ -169,7 +169,7 @@ function createComponent(component, parent, owner) {
             if (newItem.tagName === "input") {
               var input = $("<input type=" + type + "></input>")[0];
               top.appendChild(input);
-              console.log(input);
+              // console.log(input);
               item.el = input;
             }
           } else {
@@ -471,7 +471,7 @@ function updateAttrs(node, attrs, old) {
       else node.removeAttribute(key);
     }
     else if (key === 'type') {
-      
+
     }
     // handle normal attribute
     else {

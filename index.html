@@ -79,7 +79,7 @@ function TodoApp(emit, refresh) {
   function handleSubmit(evt) {
     evt.preventDefault();
     if (text !== "") {
-      items.push(text);
+      items.push({done: false, text: text});
       text = "";
       refresh();
     };
@@ -89,7 +89,7 @@ function TodoApp(emit, refresh) {
     text = document.getElementById("input").value;
     if (evt.keyCode == 13) {
       if (text !== "") {
-        items.push(text);
+        items.push({done: false, text: text});
         text = "";
         refresh();
       };
@@ -117,8 +117,10 @@ function TodoList(refresh) {
         ]
       ],
       [ "tbody", [
-          items.map(function (itemText, index) {
-            return [ TodoItem.bind(null, items, index, refresh), itemText ]
+          items.map(function (item, index) {
+            return [
+              TodoItem.bind(null, items, index, refresh), item.text, item.done
+            ]
           })
         ]
       ]
@@ -132,11 +134,15 @@ function TodoItem(array, index, refresh) {
   var array = array;
   var refresh = refresh;
   return { render: render };
-  function render(text) {
+  function render(text, done) {
     return ["tr", { klass: (index % 2 == 0) ? "" : "pure-table-odd"},
       [
         ["td",
-          ["input", { type: "checkbox" }]
+          ["input", {
+              type: "checkbox",
+              onchange: onCheckBox.bind(null, refresh, array, index)
+            }
+          ]
         ],
         ["td",
           [ "input", {
@@ -148,16 +154,23 @@ function TodoItem(array, index, refresh) {
               style: { display: active ? "inherit" : "none" }
             }
           ],
-          [
-            "span", {
+          [ "span", {
               onclick: itemOnClick.bind(null, refresh, index),
-              style: { display: !active ? "inherit" : "none" }
+              style: {
+                display: !active ? "inherit" : "none",
+                "text-decoration": done ? "line-through" : ""
+              }
             },
             text
           ]
         ]
       ]
     ]
+  }
+
+  function onCheckBox(refresh, array, index, evt) {
+    array[index]["done"] = evt.target.checked;
+    refresh();
   }
 
   function itemOnClick(refresh, index, evt) {
