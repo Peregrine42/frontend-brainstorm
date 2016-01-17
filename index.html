@@ -96,6 +96,10 @@ function TodoApp(emit, refresh) {
     };
   }
 
+  function maybeAddTodo() {
+
+  }
+
   function onChange(evt) {
     var val = evt.target.value;
     text = val;
@@ -140,7 +144,7 @@ function TodoItem(array, index, refresh) {
         ["td",
           ["input", {
               type: "checkbox",
-              onchange: onCheckBox.bind(null, refresh, array, index)
+              onclick: onCheckBox.bind(null, refresh, array, index)
             }
           ]
         ],
@@ -154,15 +158,9 @@ function TodoItem(array, index, refresh) {
               style: { display: active ? "inherit" : "none" }
             }
           ],
-          [ "span", {
-              onclick: itemOnClick.bind(null, refresh, index),
-              style: {
-                display: !active ? "inherit" : "none",
-                "text-decoration": done ? "line-through" : ""
-              }
-            },
-            text
-          ]
+          [ Label,
+            itemOnClick.bind(null, refresh, index),
+            text, active, done ]
         ]
       ]
     ]
@@ -204,6 +202,27 @@ function TodoItem(array, index, refresh) {
     setTimeout(function() {
       $(".input")[index].select();
     }, 50);
+  }
+}
+
+function Label() {
+  return {
+    render: render
+  }
+
+  function render(itemOnClick, text, active, done) {
+    var inner = [ "span",
+      {
+        onclick: itemOnClick,
+        style: {
+          display: !active ? "inherit" : "none",
+          "text-decoration": done ? "line-through" : "none"
+        }
+      },
+      text
+    ]
+    if (!done) { return inner }
+    else { return ["s", inner] }
   }
 }
 
