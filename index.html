@@ -3,12 +3,22 @@
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+  <link
+    rel="stylesheet"
+    href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css"
+  >
   <!--[if lte IE 8]>
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
+    <link
+      rel="stylesheet"
+      href=
+        "http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css"
+    >
   <![endif]-->
   <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+    <link
+      rel="stylesheet"
+      href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css"
+    >
   <!--<![endif]-->
   <style>
     input {
@@ -101,9 +111,9 @@ function TodoList(refresh) {
       "table",
       {klass: "pure-table pure-table-horizontal"}, [
         "thead", [
-          "tr", [
-            "th", "list"
-          ]
+          "tr",
+            [ "th", "done" ],
+            [ "th", "task" ]
         ]
       ],
       [ "tbody", [
@@ -125,23 +135,27 @@ function TodoItem(array, index, refresh) {
   function render(text) {
     return ["tr", { klass: (index % 2 == 0) ? "" : "pure-table-odd"},
       [
-        ["td", [
-          "input", {
-            onchange: itemOnChange.bind(null, refresh, array, index),
-            onblur: itemOnBlur.bind(null, index),
-            onkeypress: itemOnKeyPress.bind(null, refresh, array, index),
-            klass: "input",
-            value: array[index],
-            style: { display: active ? "inherit" : "none" }
-          }
+        ["td",
+          ["input", { type: "checkbox" }]
         ],
-        [
-          "span", {
-            onclick: itemOnClick.bind(null, refresh, index),
-            style: { display: !active ? "inherit" : "none" }
-          },
-          text
-        ] ]
+        ["td",
+          [ "input", {
+              onchange: itemOnChange.bind(null, refresh, array, index),
+              onblur: itemOnBlur.bind(null, index),
+              onkeypress: itemOnKeyPress.bind(null, refresh, array, index),
+              klass: "input",
+              value: array[index],
+              style: { display: active ? "inherit" : "none" }
+            }
+          ],
+          [
+            "span", {
+              onclick: itemOnClick.bind(null, refresh, index),
+              style: { display: !active ? "inherit" : "none" }
+            },
+            text
+          ]
+        ]
       ]
     ]
   }
