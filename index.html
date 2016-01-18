@@ -154,7 +154,7 @@ function TodoItem(array, index, refresh) {
               onblur: itemOnBlur.bind(null, index),
               onkeypress: itemOnKeyPress.bind(null, refresh, array, index),
               klass: "input",
-              value: array[index],
+              value: array[index].text,
               style: { display: active ? "inherit" : "none" }
             }
           ],
@@ -180,7 +180,7 @@ function TodoItem(array, index, refresh) {
   }
 
   function itemOnChange(refresh, array, index, evt) {
-    array[index] = evt.target.value
+    array[index].text = evt.target.value
     refresh();
   }
 
@@ -189,7 +189,7 @@ function TodoItem(array, index, refresh) {
 
     if (evt.keyCode == 13) {
       if (text !== "") {
-        array[index] = text;
+        array[index].text = text;
         active = false;
         refresh();
       };
