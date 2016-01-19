@@ -1,0 +1,5 @@
+function Graph() {
+  return {
+    nodes: []
+  }
+}

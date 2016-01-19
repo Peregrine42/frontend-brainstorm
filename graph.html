@@ -1,0 +1,234 @@
+<html>
+
+<head>
+  <title>Graph</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link
+    rel="stylesheet"
+    href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css"
+  >
+  <!--[if lte IE 8]>
+    <link
+      rel="stylesheet"
+      href=
+        "http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css"
+    >
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+    <link
+      rel="stylesheet"
+      href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css"
+    >
+  <!--<![endif]-->
+  <style>
+    input {
+      height: 33px;
+    }
+
+    .content {
+      margin-left: 5%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <span id="no-js">
+      Javascript not fully supported - please upgrade your browser!
+    </span>
+  </div>
+</body>
+
+
+<script src="aight.js"></script>
+<script src="html5shiv.js"></script>
+<script src="jquery-1.12.0.js"></script>
+<script src="domchanger.js"></script>
+
+<script>
+function TodoApp(emit, refresh) {
+  var items = [];
+  var text = "";
+
+  return { render: render };
+
+  function render() {
+    return ["div", {klass: "pure-g"},
+      ["div", { klass: "pure-u-1 content" },
+        ["h1", "TODO"],
+        ["form", { onsubmit: handleSubmit, klass: "pure-form" },
+          ["fieldset",
+            ["input", {
+              onchange: onChange,
+              onkeypress: onKeyPress,
+              value: text,
+              id: "input"
+            }],
+            ["input", {
+              klass: "pure-button pure-button-primary",
+              type: "submit",
+              value: "Add #" + (items.length + 1)
+            }]
+          ]
+        ],
+        [TodoList.bind(null, refresh), items]
+      ]
+    ]
+  }
+
+  function handleSubmit(evt) {
+    evt.preventDefault();
+    if (text !== "") {
+      items.push({done: false, text: text});
+      text = "";
+      refresh();
+    };
+  }
+
+  function onKeyPress(evt) {
+    text = document.getElementById("input").value;
+    if (evt.keyCode == 13) {
+      if (text !== "") {
+        items.push({done: false, text: text});
+        text = "";
+        refresh();
+      };
+    };
+  }
+
+  function maybeAddTodo() {
+
+  }
+
+  function onChange(evt) {
+    var val = evt.target.value;
+    text = val;
+    evt.preventDefault();
+  }
+}
+
+function TodoList(refresh) {
+  var refresh = refresh;
+  return { render: render };
+  function render(items) {
+    return [
+      "table",
+      {klass: "pure-table pure-table-horizontal"}, [
+        "thead", [
+          "tr",
+            [ "th", "done" ],
+            [ "th", "task" ]
+        ]
+      ],
+      [ "tbody", [
+          items.map(function (item, index) {
+            return [
+              TodoItem.bind(null, items, index, refresh), item.text, item.done
+            ]
+          })
+        ]
+      ]
+    ];
+  }
+}
+
+function TodoItem(array, index, refresh) {
+  var active = false;
+  var index = index;
+  var array = array;
+  var refresh = refresh;
+  return { render: render };
+  function render(text, done) {
+    return ["tr", { klass: (index % 2 == 0) ? "" : "pure-table-odd"},
+      [
+        ["td",
+          ["input", {
+              type: "checkbox",
+              onclick: onCheckBox.bind(null, refresh, array, index)
+            }
+          ]
+        ],
+        ["td",
+          [ "input", {
+              onchange: itemOnChange.bind(null, refresh, array, index),
+              onblur: itemOnBlur.bind(null, index),
+              onkeypress: itemOnKeyPress.bind(null, refresh, array, index),
+              klass: "input",
+              value: array[index].text,
+              style: { display: active ? "inherit" : "none" }
+            }
+          ],
+          [ Label,
+            itemOnClick.bind(null, refresh, index),
+            text, active, done ]
+        ]
+      ]
+    ]
+  }
+
+  function onCheckBox(refresh, array, index, evt) {
+    array[index]["done"] = evt.target.checked;
+    refresh();
+  }
+
+  function itemOnClick(refresh, index, evt) {
+    active = true;
+    refresh();
+    setTimeout(function() {
+      $(".input")[index].select();
+    }, 50);
+  }
+
+  function itemOnChange(refresh, array, index, evt) {
+    array[index].text = evt.target.value
+    refresh();
+  }
+
+  function itemOnKeyPress(refresh, array, index, evt) {
+    var text = $(".input")[index].value;
+
+    if (evt.keyCode == 13) {
+      if (text !== "") {
+        array[index].text = text;
+        active = false;
+        refresh();
+      };
+    };
+  }
+
+  function itemOnBlur(index, evt) {
+    active = false;
+    refresh();
+    setTimeout(function() {
+      $(".input")[index].select();
+    }, 50);
+  }
+}
+
+function Label() {
+  return {
+    render: render
+  }
+
+  function render(itemOnClick, text, active, done) {
+    var inner = [ "span",
+      {
+        onclick: itemOnClick,
+        style: {
+          display: !active ? "inherit" : "none",
+          "text-decoration": done ? "line-through" : "none"
+        }
+      },
+      text
+    ]
+    if (!done) { return inner }
+    else { return ["s", inner] }
+  }
+}
+
+domChanger(TodoApp, document.getElementById("container")).update()
+document.getElementById("no-js").remove();
+</script>
+
+</html>
