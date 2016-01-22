@@ -31,6 +31,8 @@ be smart about reusing nodes when changes happen.
 )(function () {
 "use strict";
 
+var paper = Raphael(0,0,500,500);
+
 function forEach(obj, fn) {
   var keys = Object.keys(obj);
   for (var i = 0, l = keys.length; i < l; ++i) {
@@ -65,7 +67,9 @@ function createComponent(component, parent, owner) {
   function append() {
     comment.parentNode.appendChild(comment);
     forEach(roots, function (key, node) {
-      if (node.el) parent.appendChild(node.el);
+      if (node.el) {
+        parent.appendChild(node.el);
+      }
       else if (node.append) node.append();
     });
   }
@@ -112,6 +116,7 @@ function createComponent(component, parent, owner) {
         // console.log("removed " + key)
       }
     });
+    
 
     var oldKeys = Object.keys(oldTree);
     var newKeys = Object.keys(newTree);
@@ -147,9 +152,15 @@ function createComponent(component, parent, owner) {
         // Create a new item if there isn't one
         var pending = false;
         if (!item) {
+          var el;
+          if (newItem.tagName == "circle") {
+            el = paper.circle(50, 50, 40);
+          } else {
+            el = document.createElement(newItem.tagName);
+          }
           item = oldTree[key] = {
             tagName: newItem.tagName,
-            el: document.createElement(newItem.tagName),
+            el: el,
             children: {}
           };
           if (newItem.ref) {
@@ -157,8 +168,6 @@ function createComponent(component, parent, owner) {
             refs[item.ref] = item.el;
           }
           pending = true;
-          // top.appendChild(item.el);
-          // console.log("created")
         }
         // Update the tag
         if (!item.props) item.props = {};
@@ -169,19 +178,21 @@ function createComponent(component, parent, owner) {
             if (newItem.tagName === "input") {
               var input = $("<input type=" + type + "></input>")[0];
               top.appendChild(input);
-              // console.log(input);
               item.el = input;
             }
           } else {
-            top.appendChild(item.el);
+            if (newItem.tagName == "circle") {
+            } else {
+              top.appendChild(item.el);
+            }
           }
         }
-        updateAttrs(item.el, newItem.props, item.props);
-
+        updateAttrs(item, newItem.props, item.props);
+        
         if (newItem.children) {
           apply(item.el, newItem.children, item.children);
         }
-
+        
         // if (pending == true) { top.appendChild(item.el); }
       }
 
@@ -206,7 +217,6 @@ function createComponent(component, parent, owner) {
       }
 
       else {
-        console.error(newItem);
         throw new Error("This shouldn't happen");
       }
 
@@ -297,7 +307,6 @@ function nameNodes(raw) {
       type = "el";
     }
     else {
-      console.error(item);
       throw new TypeError("Invalid item");
     }
 
@@ -397,8 +406,8 @@ function processTag(array) {
   return tag;
 }
 
-function updateAttrs(node, attrs, old) {
-
+function updateAttrs(item, attrs, old) {
+  var node = item.el;
   // Remove any attributes that were in the old version, but not in the new.
   Object.keys(old).forEach(function (key) {
     // Don't remove attributes still live.
@@ -453,7 +462,13 @@ function updateAttrs(node, attrs, old) {
         node.removeEventListener(eventName, oldValue);
       }
       // Add the new listener
-      node.addEventListener(eventName, value);
+      if (item.tagName === "circle") {
+        if (key === "onmove") {
+          node.drag(value);
+        }
+      } else {
+        node.addEventListener(eventName, value);
+      }
     }
     else if (key === "checked" && node.nodeName === "INPUT") {
       if (node.checked === value) return;
@@ -471,11 +486,24 @@ function updateAttrs(node, attrs, old) {
       else node.removeAttribute(key);
     }
     else if (key === 'type') {
-
+      // no-op cos we've 
+      // recreated it to be compatible with IE
     }
-    // handle normal attribute
+    // handle normal attribute or Raphael object
     else {
-      node.setAttribute(key, value);
+      if (item.tagName === "circle") {
+        if (key === "click") {
+          node.click(value);
+        } 
+        else if (key === "drag") {
+          node.drag(value);
+        }
+        else {
+          node.attr(key, value);
+        }
+      } else {
+        node.setAttribute(key, value);
+      }
     }
 
     // console.log("set " + key)

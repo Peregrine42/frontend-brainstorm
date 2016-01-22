@@ -5748,7 +5748,14 @@
      | })(Raphael.ninja());
     \*/
     R.ninja = function () {
-        oldRaphael.was ? (g.win.Raphael = oldRaphael.is) : delete Raphael;
+        if (oldRaphael.was) {
+          g.win.Raphael = oldRaphael.is;
+        } else {
+          Raphael = undefined;
+          try {
+            delete Raphael;
+          } catch(e) {};
+        };
         return R;
     };
     /*\
