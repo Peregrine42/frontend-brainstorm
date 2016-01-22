@@ -447,9 +447,16 @@ function updateAttrs(item, attrs, old) {
       updateStyle(node.style, value, oldValue);
       return;
     }
-
+    
+    // hackety hack hack
+    if (item.tagName === "circle" && oldValue && oldValue.tag && oldValue.tag === value.tag) {
+      return
+    }
+    
     // Skip any unchanged values.
-    if (oldValue === value) return;
+    if (oldValue === value) {
+      return
+    };
 
     // Record new value in virtual tree
     old[key] = value;
@@ -462,13 +469,7 @@ function updateAttrs(item, attrs, old) {
         node.removeEventListener(eventName, oldValue);
       }
       // Add the new listener
-      if (item.tagName === "circle") {
-        if (key === "onmove") {
-          node.drag(value);
-        }
-      } else {
-        node.addEventListener(eventName, value);
-      }
+      node.addEventListener(eventName, value);
     }
     else if (key === "checked" && node.nodeName === "INPUT") {
       if (node.checked === value) return;
@@ -496,7 +497,7 @@ function updateAttrs(item, attrs, old) {
           node.click(value);
         } 
         else if (key === "drag") {
-          node.drag(value);
+          node.drag(value.action);
         }
         else {
           node.attr(key, value);

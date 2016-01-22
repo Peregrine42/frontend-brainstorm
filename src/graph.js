@@ -22,7 +22,10 @@ function NodeView(refresh) {
         cy: node_data.y, 
         fill: "#fff",
         r: 25,
-        onmove: onmove.bind(null, node_data)
+        drag: {
+          tag: "drag",
+          action: onmove.bind(null, node_data)
+        }
       } 
     ]
   }
@@ -31,6 +34,7 @@ function NodeView(refresh) {
 function GraphView(emit, refresh) {
   var graph = Graph();
   graph.nodes.push({x: 100, y: 100, foo: "bar"})
+  graph.nodes.push({x: 300, y: 100, foo: "bar"})
 
   function render() {
     var rendered_nodes = graph.nodes.map(
