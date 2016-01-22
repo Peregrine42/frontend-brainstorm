@@ -5,11 +5,12 @@ function Graph() {
   }
 }
 
-function GraphView(graph) {
+function GraphView() {
+  graph = { nodes: [1] }
   function render() {
     var rendered_nodes = graph.nodes.map(
       function(node) {
-        return [ "circle", { cx: 0, cy: 0 } ]
+        return [ "circle", { cx: 40, cy: 40, r: 50 } ]
       }
     )
     return rendered_nodes
