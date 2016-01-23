@@ -116,7 +116,7 @@ function createComponent(component, parent, owner) {
         // console.log("removed " + key)
       }
     });
-    
+
 
     var oldKeys = Object.keys(oldTree);
     var newKeys = Object.keys(newTree);
@@ -188,11 +188,11 @@ function createComponent(component, parent, owner) {
           }
         }
         updateAttrs(item, newItem.props, item.props);
-        
+
         if (newItem.children) {
           apply(item.el, newItem.children, item.children);
         }
-        
+
         // if (pending == true) { top.appendChild(item.el); }
       }
 
@@ -447,12 +447,12 @@ function updateAttrs(item, attrs, old) {
       updateStyle(node.style, value, oldValue);
       return;
     }
-    
+
     // hackety hack hack
     if (item.tagName === "circle" && oldValue && oldValue.tag && oldValue.tag === value.tag) {
       return
     }
-    
+
     // Skip any unchanged values.
     if (oldValue === value) {
       return
@@ -487,7 +487,7 @@ function updateAttrs(item, attrs, old) {
       else node.removeAttribute(key);
     }
     else if (key === 'type') {
-      // no-op cos we've 
+      // no-op cos we've
       // recreated it to be compatible with IE
     }
     // handle normal attribute or Raphael object
@@ -495,9 +495,13 @@ function updateAttrs(item, attrs, old) {
       if (item.tagName === "circle") {
         if (key === "click") {
           node.click(value);
-        } 
+        }
         else if (key === "drag") {
-          node.drag(value.action);
+          node.drag(
+            value.action.onmove,
+            value.action.onstart,
+            value.action.onend
+          );
         }
         else {
           node.attr(key, value);
