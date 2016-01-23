@@ -153,8 +153,12 @@ function createComponent(component, parent, owner) {
         var pending = false;
         if (!item) {
           var el;
-          if (newItem.tagName == "circle") {
-            el = paper.circle(50, 50, 40);
+          if (newItem.tagName.substr(0,5) === "raph:") {
+            if (newItem.tagName === "raph:circle") {
+              el = paper.circle(50, 50, 40);
+            } else if (newItem.tagName === "raph:path") {
+              el = paper.path("M0 0L50 50")
+            }
           } else {
             el = document.createElement(newItem.tagName);
           }
@@ -181,7 +185,7 @@ function createComponent(component, parent, owner) {
               item.el = input;
             }
           } else {
-            if (newItem.tagName == "circle") {
+            if (newItem.tagName.substr(0,5) === "raph:") {
             } else {
               top.appendChild(item.el);
             }
@@ -421,7 +425,7 @@ function updateAttrs(item, attrs, old) {
 
     // All other attributes remove normally including "style"
     else {
-      if (item.tagName === "circle") {
+      if (item.tagName.substr(0,5) === "raph:") {
         if (key === "drag") {
           node.undrag();
         } else if (key === "click") {
@@ -459,7 +463,7 @@ function updateAttrs(item, attrs, old) {
     }
 
     // hackety hack hack
-    if (item.tagName === "circle" && oldValue && oldValue.tag && oldValue.tag === value.tag) {
+    if (item.tagName.substr(0,5) === "raph:" && oldValue && oldValue.tag && oldValue.tag === value.tag) {
       return
     }
 
@@ -502,7 +506,7 @@ function updateAttrs(item, attrs, old) {
     }
     // handle normal attribute or Raphael object
     else {
-      if (item.tagName === "circle") {
+      if (item.tagName.substr(0,5) === "raph:") {
         if (key === "click") {
           node.click(value);
         }
