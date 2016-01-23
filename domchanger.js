@@ -421,7 +421,17 @@ function updateAttrs(item, attrs, old) {
 
     // All other attributes remove normally including "style"
     else {
-      node.removeAttribute(key);
+      if (item.tagName === "circle") {
+        if (key === "drag") {
+          node.undrag();
+        } else if (key === "click") {
+          node.unclick();
+        } else {
+          node.removeData(key)
+        }
+      } else {
+        node.removeAttribute(key);
+      }
     }
     // console.log("unset " + key)
 
