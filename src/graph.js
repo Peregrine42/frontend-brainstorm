@@ -1,3 +1,5 @@
+scale = 2;
+
 function Graph() {
   return {
     nodes: [],
@@ -13,8 +15,11 @@ function LinkView(refresh) {
       "raph:path",
       {
         path:
-          "M" + link_data.start_target.x + " " + link_data.start_target.y +
-          "L" + link_data.end_target.x + " " + link_data.end_target.y
+          "M" + link_data.start_target.x*scale + " " + link_data.start_target.y*scale +
+          "L" + link_data.end_target.x*scale + " " + link_data.end_target.y*scale,
+        stroke: "#43426e",
+        "stroke-width": 5,
+        "stroke-dasharray": ["-."]
       }
     ]
   }
@@ -37,9 +42,11 @@ function NodeView(refresh) {
     return [
       "raph:circle",
       {
-        cx: node_data.x,
-        cy: node_data.y,
-        fill: "#fff",
+        cx: node_data.x * scale,
+        cy: node_data.y * scale,
+        fill: "#616094",
+        stroke: "#43426e",
+        "stroke-width": 5,
         r: 25,
         drag: {
           tag: "drag",
@@ -55,11 +62,16 @@ function NodeView(refresh) {
 
 function GraphView(emit, refresh) {
   var graph = Graph();
-  graph.nodes.push({x: 100, y: 100, foo: "bar"})
-  graph.nodes.push({x: 300, y: 100, foo: "bar"})
+  graph.nodes.push({x: 100, y: 100})
+  graph.nodes.push({x: 300, y: 100})
+  graph.nodes.push({x: 300, y: 500})
 
   graph.links.push({
     start_target: graph.nodes[0], end_target: graph.nodes[1]
+  })
+
+  graph.links.push({
+    start_target: graph.nodes[0], end_target: graph.nodes[2]
   })
 
   function render() {

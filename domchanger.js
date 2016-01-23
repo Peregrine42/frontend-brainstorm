@@ -31,7 +31,8 @@ be smart about reusing nodes when changes happen.
 )(function () {
 "use strict";
 
-var paper = Raphael(0,0,500,500);
+var paper = Raphael(document.getElementById('viewport'));
+paper.setViewBox(0, 0, $(window).width() * 2, $(window).height() * 2)
 
 function forEach(obj, fn) {
   var keys = Object.keys(obj);
