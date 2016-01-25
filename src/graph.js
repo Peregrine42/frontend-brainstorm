@@ -1,4 +1,4 @@
-scale = 2;
+scale = 1;
 
 function Graph() {
   return {
@@ -15,9 +15,11 @@ function LinkView(refresh) {
       "raph:path",
       {
         path:
-          "M" + link_data.start_target.x*scale + " " + link_data.start_target.y*scale +
-          "L" + link_data.end_target.x*scale + " " + link_data.end_target.y*scale,
-        stroke: "#43426e",
+          "M" + link_data.start_target.x*scale + 
+          " " + link_data.start_target.y*scale +
+          "L" + link_data.end_target.x*scale + 
+          " " + link_data.end_target.y*scale,
+        stroke: "#2ab7cb",
         "stroke-width": 5,
         "stroke-dasharray": ["-."]
       }
@@ -44,8 +46,8 @@ function NodeView(refresh) {
       {
         cx: node_data.x * scale,
         cy: node_data.y * scale,
-        fill: "#616094",
-        stroke: "#43426e",
+        fill: "#40cde0",
+        stroke: "#2ab7cb",
         "stroke-width": 5,
         r: 25,
         drag: {
