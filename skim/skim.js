@@ -19,7 +19,8 @@ function findByIdMeh(dom, elWithIndex) {
       return;
     }
   })
-  return [index, result];
+  if (!result) { return false }
+  return [index, result, el];
 }
 
 function map(array, func) {
@@ -28,6 +29,10 @@ function map(array, func) {
     result.push(func(item));
   })
   return result;
+}
+
+function flatMap(array, func) {
+  return Array.prototype.concat.apply([], array.map(func));
 }
 
 function compareValues(key, values) {
@@ -119,13 +124,12 @@ function compare(oldDom, newDom, path) {
   var createActions = map(createdElements, makeCreateAction.bind(this, path));
   
   var elementsInBothDoms = map(newDomWithIndex, findByIdMeh.bind(null, oldDom))
-  console.log(elementsInBothDoms);
   var compactedElementsInBothDoms = compact(elementsInBothDoms);
-  console.log(compactedElementsInBothDoms);
-  var updateActions = map(compactedElementsInBothDoms, function(indexedEl) {
+  var updateActions = flatMap(compactedElementsInBothDoms, function(elsWithIndex) {
+    var index = elsWithIndex[0];
+    var el = elsWithIndex[2];
+    var oldEl = elsWithIndex[1];
     var actions = [];
-    var index = indexedEl[0];
-    var el = indexedEl[1];
     var attrDiff = compareObjects(oldEl[2], el[2]);
     if (attrDiff) { actions.push([path + index, "update", el[0], attrDiff]) }
     var childActions = compare(oldEl[3], el[3], path + index + ".");
