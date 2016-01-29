@@ -1,4 +1,4 @@
-function findById(el, dom) {
+function findById(dom, el) {
   var result = false;
   dom.forEach(function(candidate) {
     if (el[0] === candidate[0]) { 
@@ -9,18 +9,11 @@ function findById(el, dom) {
   return result;
 }
 
-function findByIdMeh(dom, elWithIndex) {
-  var index = elWithIndex[0];
-  var el = elWithIndex[1];
-  var result = false;
-  dom.forEach(function(candidate) {
-    if (el[0] === candidate[0]) { 
-      result = candidate; 
-      return;
-    }
-  })
+function findByIdFromContainer(dom, container) {
+  var el = container.item;
+  var result = findById(dom, el);
   if (!result) { return false }
-  return [index, result, el];
+  return { index: container.index, item: result, oldItem: el };
 }
 
 function map(array, func) {
@@ -93,8 +86,16 @@ function withIndex(arr) {
   return result;
 }
 
+function withIndexOnObject(arr) {
+  result = [];
+  arr.forEach(function(item, index) { 
+    result.push( { index: index, item: item } ) 
+  });
+  return result;
+}
+
 function notFoundIn(list, el) {
-  return !(findById(el[1], list));
+  return !(findById(list, el[1]));
 }
 
 function makeDestroyAction(path, indexed_el) {
@@ -107,6 +108,24 @@ function makeCreateAction(path, indexed_el) {
   var index = indexed_el[0];
   var el = indexed_el[1];
   return [ path + index, "create", el[0], el[1], el[2] ];
+}
+
+function compareObjectAndChildren(path, index, oldEl, el) {
+  var actions = [];
+  var attrDiff = compareObjects(oldEl[2], el[2]);
+  if (attrDiff) { actions.push([path + index, "update", el[0], attrDiff]) }
+  var childActions = compare(oldEl[3], el[3], path + index + ".");
+  if (childActions) { 
+    childActions.forEach(function(a) { actions.push(a) }) 
+  }
+  return actions;
+}
+
+function compareContainers(path, container) {
+  var actions = compareObjectAndChildren(
+    path, container.index, container.item, container.oldItem
+  );
+  return actions;
 }
 
 function compare(oldDom, newDom, path) {
@@ -123,32 +142,14 @@ function compare(oldDom, newDom, path) {
   var createdElements = filter(newDomWithIndex, notFoundIn.bind(null, oldDom));
   var createActions = map(createdElements, makeCreateAction.bind(this, path));
   
-  var elementsInBothDoms = map(newDomWithIndex, findByIdMeh.bind(null, oldDom))
-  var compactedElementsInBothDoms = compact(elementsInBothDoms);
-  var updateActions = flatMap(compactedElementsInBothDoms, function(elsWithIndex) {
-    var index = elsWithIndex[0];
-    var el = elsWithIndex[2];
-    var oldEl = elsWithIndex[1];
-    var actions = [];
-    var attrDiff = compareObjects(oldEl[2], el[2]);
-    if (attrDiff) { actions.push([path + index, "update", el[0], attrDiff]) }
-    var childActions = compare(oldEl[3], el[3], path + index + ".");
-    if (childActions) { 
-      childActions.forEach(function(a) { actions.push(a) }) 
-    }
-    return actions;
-  })
-  // newDom.forEach(function(el, index) {
-  //   var oldEl = findById(el, oldDom);
-  //   if (oldEl) {
-  //     var attrDiff = compareObjects(oldEl[2], el[2]);
-  // if (attrDiff) { actions.push([path + index, "update", el[0], attrDiff]) }
-  //     var childActions = compare(oldEl[3], el[3], path + index + ".");
-  //     if (childActions) { 
-  //       childActions.forEach(function(a) { actions.push(a) }) 
-  //     }
-  //   }
-  // });
+  var newDomWithIndex = withIndexOnObject(newDom);
+  var elementsInBothDoms = map(
+    newDomWithIndex, findByIdFromContainer.bind(null, oldDom)
+  );
+  var updateActions = flatMap(
+    compact(elementsInBothDoms), compareContainers.bind(null, path)
+  );
+  
   var actions = actions.concat(deleteActions);
   var actions = actions.concat(createActions);
   var actions = actions.concat(updateActions);
