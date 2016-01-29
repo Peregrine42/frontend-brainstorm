@@ -1,3 +1,17 @@
+Array.prototype.flatMap = function(lambda) { 
+    return Array.prototype.concat.apply([], this.map(lambda)); 
+};
+
+Array.prototype.compact = function(deleteValue) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] == deleteValue) {         
+      this.splice(i, 1);
+      i--;
+    }
+  }
+  return this;
+};
+
 function findById(dom, el) {
   var result = false;
   dom.forEach(function(candidate) {
@@ -16,18 +30,6 @@ function findByIdFromContainer(dom, container) {
   return { index: container.index, item: result, oldItem: el };
 }
 
-function map(array, func) {
-  var result = [];
-  array.forEach(function(item) {
-    result.push(func(item));
-  })
-  return result;
-}
-
-function flatMap(array, func) {
-  return Array.prototype.concat.apply([], array.map(func));
-}
-
 function compareValues(key, values) {
   oldValue = values[0];
   newValue = values[1];
@@ -36,7 +38,7 @@ function compareValues(key, values) {
 }
 
 function pairKeys(oldObj, newObj) {
-  return map(Object.keys(newObj), function(key) {
+  return Object.keys(newObj).map(function(key) {
     var newValue = newObj[key];
     var oldValue = oldObj[key];
     return [key, [oldValue, newValue]];
@@ -51,14 +53,6 @@ function mergeIntoObject(objArray) {
   return result
 }
 
-function compact(arr) {
-  var result = [];
-  arr.forEach(function(item) {
-    if (item) { result.push(item) };
-  })
-  return result;
-}
-
 function objIsEmpty(obj) {
   for(var prop in obj) {
     if (obj.hasOwnProperty(prop)) return obj;
@@ -68,16 +62,10 @@ function objIsEmpty(obj) {
 
 function compareObjects(oldObj, newObj) {
   var keyPairs = pairKeys(oldObj, newObj);
-  var differentKeyPairs = map(keyPairs, (function(pair) { 
+  var differentKeyPairs = keyPairs.map(function(pair) { 
     return compareValues(pair[0], pair[1]);
-  } ) )
-  return objIsEmpty(mergeIntoObject(compact(differentKeyPairs)));
-}
-
-function filter(arr, func) {
-  result = [];
-  arr.forEach(function(item) { if(func(item)) { result.push(item) } })
-  return result;
+  } )
+  return objIsEmpty(mergeIntoObject(differentKeyPairs.compact(false)));
 }
 
 function withIndex(arr) {
@@ -86,7 +74,7 @@ function withIndex(arr) {
   return result;
 }
 
-function withIndexOnObject(arr) {
+function addIndex(arr) {
   result = [];
   arr.forEach(function(item, index) { 
     result.push( { index: index, item: item } ) 
@@ -95,19 +83,20 @@ function withIndexOnObject(arr) {
 }
 
 function notFoundIn(list, el) {
-  return !(findById(list, el[1]));
+  return !(findById(list, el));
 }
 
-function makeDestroyAction(path, indexed_el) {
-  var index = indexed_el[0];
-  var el = indexed_el[1];
+function notFoundFromContainer(list, container) {
+  return !findById(list, container.item);
+}
+
+function makeDestroyAction(path, el, index) {
   return [ path + index, "destroy", el[0] ]
 }
 
-function makeCreateAction(path, indexed_el) {
-  var index = indexed_el[0];
-  var el = indexed_el[1];
-  return [ path + index, "create", el[0], el[1], el[2] ];
+function makeCreateAction(path, container) {
+  var el = container.item;
+  return [ path + container.index, "create", el[0], el[1], el[2] ];
 }
 
 function compareObjectAndChildren(path, index, oldEl, el) {
@@ -132,27 +121,24 @@ function compare(oldDom, newDom, path) {
   if (!path) { path = "." }
   if (!oldDom) { oldDom = [] }
   if (!newDom) { newDom = [] }
-  var actions = [];
   
-  var oldDomWithIndex = withIndex(oldDom);
-  var deletedElements = filter(oldDomWithIndex, notFoundIn.bind(null, newDom));
-  var deleteActions = map(deletedElements, makeDestroyAction.bind(this, path));
+  var deleteActions = oldDom
+    .filter(notFoundIn.bind(null, newDom))
+    .map(makeDestroyAction.bind(null, path));
   
-  var newDomWithIndex = withIndex(newDom);
-  var createdElements = filter(newDomWithIndex, notFoundIn.bind(null, oldDom));
-  var createActions = map(createdElements, makeCreateAction.bind(this, path));
+  var createActions = addIndex(newDom)
+    .filter(notFoundFromContainer.bind(null, oldDom))
+    .map(makeCreateAction.bind(null, path));
   
-  var newDomWithIndex = withIndexOnObject(newDom);
-  var elementsInBothDoms = map(
-    newDomWithIndex, findByIdFromContainer.bind(null, oldDom)
-  );
-  var updateActions = flatMap(
-    compact(elementsInBothDoms), compareContainers.bind(null, path)
-  );
+  var updateActions = addIndex(newDom)
+    .map(findByIdFromContainer.bind(null, oldDom))
+    .compact(false)
+    .flatMap(compareContainers.bind(null, path));
   
-  var actions = actions.concat(deleteActions);
-  var actions = actions.concat(createActions);
-  var actions = actions.concat(updateActions);
+  var actions = []
+    .concat(deleteActions)
+    .concat(createActions)
+    .concat(updateActions);
   return actions;
 }
 
