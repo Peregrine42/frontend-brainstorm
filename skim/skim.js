@@ -170,7 +170,9 @@ var oldDom = $.extend(true, [], newDom);
 var diff = compare(oldDom, newDom);
 console.log(
   "same", diff,
-  JSON.stringify(diff) === JSON.stringify([])
+  JSON.stringify(diff) === JSON.stringify(
+    []
+  )
 );
 
 var oldDom = $.extend(true, [], newDom);
@@ -244,6 +246,29 @@ console.log(
   JSON.stringify(diff) === JSON.stringify(
     [
       [ ".0.0", "update", "#3", { foo: "baz" } ]
+    ]
+  )
+);
+
+var oldDom = $.extend(true, [], newDom);
+var diff = compare(oldDom, newDom);
+console.log(
+  "same", diff,
+  JSON.stringify(diff) === JSON.stringify(
+    []
+  )
+);
+
+var oldDom = $.extend(true, [], newDom);
+var newDom = [
+  [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [] ]
+]
+var diff = compare(oldDom, newDom);
+console.log(
+  "deleting a nested node", diff,
+  JSON.stringify(diff) === JSON.stringify(
+    [
+      [ ".0.0", "destroy", "#3" ]
     ]
   )
 );
