@@ -1,0 +1,76 @@
+<html>
+<body>
+  <div id="data">
+    <table>
+      <thead>
+        <tr>
+          <th>First</th>
+          <th>Second</th>
+          <th>Third</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>asdf</td>
+          <td>asdf</td>
+          <td>asdf</td>
+        </tr>
+        <tr>
+          <td>bnmk</td>
+          <td>bnmk</td>
+          <td>bnmk</td>
+        </tr>
+        <tr>
+          <td>cvbn</td>
+          <td>cvbn</td>
+          <td>cvbn</td>
+        </tr>
+        <tr>
+          <td>dfgh</td>
+          <td>dfgh</td>
+          <td>dfgh</td>
+        </tr>
+        <tr>
+          <td>erty</td>
+          <td>erty</td>
+          <td>erty</td>
+        </tr>
+        <tr>
+          <td>fghj</td>
+          <td>fghj</td>
+          <td>fghj</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+
+<script src="jquery-1.12.0.js"></script>
+<script>
+$(document).ready(function(){
+  function paginate(el) {
+    el.after('<div id="nav"></div>');
+    var rowsShown = 4;
+    var rowsTotal = $('#data tbody tr').length;
+    var numPages = rowsTotal/rowsShown;
+    for(i = 0;i < numPages; i++) {
+      var pageNum = i + 1;
+      $('#nav').append('<a href="#" rel="'+i+'">'+pageNum+'</a> ');
+    }
+    $('#data tbody tr').hide();
+    $('#data tbody tr').slice(0, rowsShown).show();
+    $('#nav a:first').addClass('active');
+    $('#nav a').bind('click', function(){
+      $('#nav a').removeClass('active');
+      $(this).addClass('active');
+      var currPage = $(this).attr('rel');
+      var startItem = currPage * rowsShown;
+      var endItem = startItem + rowsShown;
+      $('#data tbody tr').hide().slice(startItem, endItem).show();
+    });
+  }
+  paginate($("#data"));
+});
+</script>
+
+</html>
