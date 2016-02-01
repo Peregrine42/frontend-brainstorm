@@ -16,7 +16,6 @@ var diff = compare(oldDom, newDom);
 var target = document.getElementById("container");
 var paper = Raphael(target);
 
-
 var SHAPE_NAME = 3;
 var ATTRIBUTES = 4;
 
