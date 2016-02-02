@@ -164,17 +164,6 @@ function updateComponent(component, oldDom) {
 // canvas.state.origin.y = 300;
 // var oldDom = updateComponent(canvas, oldDom);
 
-var data = [
-  { value: 0.5, id: 0 },
-  { value: 0.1, id: 1 },
-  { value: 0.4, id: 2 },
-  { value: 0.2, id: 3 },
-  { value: 0.7, id: 4 },
-  { value: 0.9, id: 5 },
-  { value: 1,   id: 6 },
-  { value: 0.4, id: 7 }
-]
-
 function Column(point, index, width, height) {
   var datum = point.value;
   var id = point.id;
@@ -197,8 +186,12 @@ function Column(point, index, width, height) {
   }
 }
 
-function Graph(data) {
-  return { render: render };
+function Graph() {
+  var data = [];
+  return { 
+    render: render,
+    addData: function(newData) { data.push(newData) }
+  };
   function render() {
     var columns = data.map(function(datum, index) {
       return Column(datum, index, (500/data.length), 500).render();
@@ -208,5 +201,21 @@ function Graph(data) {
 }
 
 var oldDom = [];
-var graph = Graph(data);
+var graph = Graph();
 updateComponent(graph, oldDom);
+
+var idCount = 0;
+setInterval(function() {
+  function success(response) {
+    var resp = JSON.parse(response);
+    idCount += 1;
+    var newValue = {value: resp.value, id: idCount};
+    graph.addData(newValue);
+    oldDom = updateComponent(graph, oldDom);
+  }
+  $.ajax({
+    crossDomain: true,
+    url: "http://localhost:3000",
+    success: success
+  });
+}, 1000)
