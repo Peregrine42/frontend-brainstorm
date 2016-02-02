@@ -14,17 +14,21 @@ function Tetronimo() {
 function Path() {
   return {render: render}
   function buildPath(origin) {
-    return "M" + origin.x + " " + origin.y + " l " + 100 + " " + 100;
+    endPoint = { x: 150 - origin.x, y: 100 - origin.y };
+    return (
+      "M" + origin.x + " " + origin.y + " l " + endPoint.x + " " + endPoint.y
+    )
   }
   function render(color, origin) {
     var newPath = buildPath(origin);
     return [ 
       "#1", "path", { 
-      path: newPath,
-      "stroke-dasharray": "-",
-      stroke: color,
-      "stroke-width": 3,
-      "arrow-end": "oval-wide-long"
+        path: newPath,
+        "stroke-dasharray": "-",
+        stroke: color,
+        "stroke-width": 3,
+        "arrow-end": "oval-wide-long",
+        "arrow-start": "oval-wide-long"
       } 
     ]
   }
@@ -34,8 +38,8 @@ function Circle() {
   function render(radius, origin) {
     return [ 
       "#3", "circle", { 
-        x: origin.x, 
-        y: origin.y, 
+        cx: origin.x, 
+        cy: origin.y, 
         r: radius,
         "stroke-width": 3
       }
@@ -93,11 +97,20 @@ function createCircle(action) {
   return circle;
 }
 
+function createRect(action) {
+  var attrs = action[ATTRIBUTES];
+  var rect = paper.rect(0,0,50,50);
+  updateShape(rect, attrs);
+  return rect;
+}
+
 function createShape(action) {
   if (action[SHAPE_NAME] === "path") {
     return createPath(action);
   } else if (action[SHAPE_NAME] === "circle") {
     return createCircle(action);
+  } else if (action[SHAPE_NAME] === "rect") {
+    return createRect(action);
   }
 }
 
@@ -132,31 +145,52 @@ function destroy(action) {
   shape.remove();
 }  
 
-function updateComponent(component, oldDom, state) {
-  var newDom = component.render(state);
+function updateComponent(component, oldDom) {
+  var newDom = component.render();
   var diff = compare(oldDom, newDom);
-  console.log("diff", diff);
   patch(diff);
   return newDom;
 }
 
+// var oldDom = [];
+// var canvas = Canvas();
+// var oldDom = updateComponent(canvas, oldDom);
+// 
+// canvas.state.radius = 35;
+// var oldDom = updateComponent(canvas, oldDom);
+// 
+// canvas.state.radius = canvas.state.radius * 2;
+// canvas.state.origin.x = 400;
+// canvas.state.origin.y = 300;
+// var oldDom = updateComponent(canvas, oldDom);
+
+var data = [
+  0.5, 0.1, 0.4, 0.2, 0.7, 0.9, 1
+]
+
+function Column(data, totalHeight, width, bottom) {
+  return { 
+    render: render,
+    topFromBottom: topFromBottom 
+  };
+  function topFromBottom() {
+    return bottom + (data * totalHeight);
+  }
+  function render() {
+    return 
+      [ "#1", "rect", 
+        { x: 0, y: topFromBottom(), width: width, height: data * totalHeight }
+      ]
+  }
+}
+
+function Graph(data) {
+  return { render: render };
+  function render() {
+    return [ Column(data[0], 500, 10, 500).render() ]
+  }
+}
+
 var oldDom = [];
-var canvas = Canvas();
-var oldDom = updateComponent(canvas, oldDom);
-
-canvas.state.radius = 200;
-var oldDom = updateComponent(canvas, oldDom);
-
-canvas.state.radius = canvas.state.radius * 2;
-canvas.state.origin.x = 50
-var oldDom = updateComponent(canvas, oldDom);
-
-// var oldDom = $.extend(true, [], newDom);
-// var newDom = [
-//   Path().render(),
-//   Circle().render(),
-//   Tetronimo().render()
-// ]
-// var diff = compare(oldDom, newDom);
-// console.log(diff);
-// patch(diff);
+var graph = Graph(data);
+updateComponent(graph, oldDom);
