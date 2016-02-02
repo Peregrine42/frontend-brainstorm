@@ -168,26 +168,33 @@ var data = [
   0.5, 0.1, 0.4, 0.2, 0.7, 0.9, 1
 ]
 
-function Column(data, totalHeight, width, bottom) {
+function Column(datum, index, width, height) {
   return { 
     render: render,
     topFromBottom: topFromBottom 
   };
   function topFromBottom() {
-    return bottom + (data * totalHeight);
+    return height - (datum * height);
   }
   function render() {
-    return 
+    return (
       [ "#1", "rect", 
-        { x: 0, y: topFromBottom(), width: width, height: data * totalHeight }
+        { x: width * index, 
+          y: topFromBottom(), 
+          width: width, 
+          height: datum * height }
       ]
+    )
   }
 }
 
 function Graph(data) {
   return { render: render };
   function render() {
-    return [ Column(data[0], 500, 10, 500).render() ]
+    var columns = data.map(function(datum, index) {
+      return Column(datum, index, (500/data.length), 500).render();
+    })
+    return columns;
   }
 }
 
