@@ -14,14 +14,13 @@ function Tetronimo() {
 function Path() {
   return {render: render}
   function buildPath(origin) {
-    
+    return "M" + origin.x + " " + origin.y + " l " + 100 + " " + 100;
   }
   function render(color, origin) {
-    newPath = buildPath(origin)
+    var newPath = buildPath(origin);
     return [ 
       "#1", "path", { 
-      path: 
-        "M30 30 l10 10",
+      path: newPath,
       "stroke-dasharray": "-",
       stroke: color,
       "stroke-width": 3,
@@ -149,6 +148,7 @@ canvas.state.radius = 200;
 var oldDom = updateComponent(canvas, oldDom);
 
 canvas.state.radius = canvas.state.radius * 2;
+canvas.state.origin.x = 50
 var oldDom = updateComponent(canvas, oldDom);
 
 // var oldDom = $.extend(true, [], newDom);
