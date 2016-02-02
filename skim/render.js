@@ -165,10 +165,19 @@ function updateComponent(component, oldDom) {
 // var oldDom = updateComponent(canvas, oldDom);
 
 var data = [
-  0.5, 0.1, 0.4, 0.2, 0.7, 0.9, 1
+  { value: 0.5, id: 0 },
+  { value: 0.1, id: 1 },
+  { value: 0.4, id: 2 },
+  { value: 0.2, id: 3 },
+  { value: 0.7, id: 4 },
+  { value: 0.9, id: 5 },
+  { value: 1,   id: 6 },
+  { value: 0.4, id: 7 }
 ]
 
-function Column(datum, index, width, height) {
+function Column(point, index, width, height) {
+  var datum = point.value;
+  var id = point.id;
   return { 
     render: render,
     topFromBottom: topFromBottom 
@@ -178,7 +187,7 @@ function Column(datum, index, width, height) {
   }
   function render() {
     return (
-      [ "#1", "rect", 
+      [ "#" + id, "rect", 
         { x: width * index, 
           y: topFromBottom(), 
           width: width, 
