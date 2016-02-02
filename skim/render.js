@@ -203,14 +203,14 @@ function Graph(maxColumns) {
   };
   function render() {
     var columns = data.map(function(datum, index) {
-      return Column(datum, index, (500/data.length), 500).render();
+      return Column(datum, index, (501/(data.length + 1)), 500).render();
     })
     return columns;
   }
 }
 
 var oldDom = [];
-var graph = Graph(20);
+var graph = Graph(5);
 updateComponent(graph, oldDom);
 
 var idCount = 0;
