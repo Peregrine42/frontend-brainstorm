@@ -78,6 +78,10 @@ var SHAPE_NAME = 3;
 var ATTRIBUTES = 4;
 
 function updateShape(shape, attributes) {
+  shape.animate(attributes, 500, "bounce");
+}
+
+function updateShapeAtCreation(shape, attributes) {
   shape.attr(attributes);
 }
 
@@ -85,7 +89,7 @@ function updateShape(shape, attributes) {
 function createPath(action) {
   var attrs = action[ATTRIBUTES];
   var path = paper.path(attrs.path);
-  updateShape(path, attrs);
+  updateShapeAtCreation(path, attrs);
   return path;
 }
 
@@ -93,14 +97,14 @@ function createPath(action) {
 function createCircle(action) {
   var attrs = action[ATTRIBUTES];
   var circle = paper.circle(attrs.x, attrs.y, attrs.r);
-  updateShape(circle, attrs);
+  updateShapeAtCreation(circle, attrs);
   return circle;
 }
 
 function createRect(action) {
   var attrs = action[ATTRIBUTES];
   var rect = paper.rect(0,0,50,50);
-  updateShape(rect, attrs);
+  updateShapeAtCreation(rect, attrs);
   return rect;
 }
 
@@ -180,17 +184,22 @@ function Column(point, index, width, height) {
         { x: width * index, 
           y: topFromBottom(), 
           width: width, 
-          height: datum * height }
+          height: datum * height,
+          fill: "rgb(27, 150, " + datum * 255 + ")"
+        }
       ]
     )
   }
 }
 
-function Graph() {
+function Graph(maxColumns) {
   var data = [];
   return { 
     render: render,
-    addData: function(newData) { data.push(newData) }
+    addData: function(newData) { 
+      if (data.length >= maxColumns) { data.shift(); }
+      data.push(newData);
+    }
   };
   function render() {
     var columns = data.map(function(datum, index) {
@@ -201,7 +210,7 @@ function Graph() {
 }
 
 var oldDom = [];
-var graph = Graph();
+var graph = Graph(20);
 updateComponent(graph, oldDom);
 
 var idCount = 0;
