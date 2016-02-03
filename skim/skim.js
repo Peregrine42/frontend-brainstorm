@@ -142,133 +142,133 @@ function compare(oldDom, newDom, path) {
   return actions;
 }
 
-var oldDom = [];
-var newDom = [
-  [ "#1", "line", { x1: 40, y1: 40, x2: 60, y2: 60 }, [] ]
-];
-var diff = compare(oldDom, newDom);
-console.log(
-  "zero to initial", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    [[ ".0", "create", "#1", "line", { x1: 40, y1: 40, x2: 60, y2: 60 } ]]
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var newDom = [
-  [ "#1", "line", { x1: 40, y1: 40, x2: 70, y2: 60 }, [] ]
-]
-var diff = compare(oldDom, newDom);
-console.log(
-  "update", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    [[ ".0", "update", "#1", { x2: 70 } ]]
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var diff = compare(oldDom, newDom);
-console.log(
-  "same", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    []
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var newDom = [
-  [ "#1", "line", { x1: 0, y1: 0, x2: 0, y2: 60 }, [] ]
-]
-var diff = compare(oldDom, newDom);
-console.log(
-  "big update", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    [[ ".0", "update", "#1", { x1: 0, y1: 0, x2: 0 } ]]
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var newDom = [
-  [ "#1", "line", { x1: 0, y1: 0, x2: 0, y2: 60 }, [] ],
-  [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [] ]
-]
-var diff = compare(oldDom, newDom);
-console.log(
-  "addition", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    [
-      [ ".1", "create", "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 } ]
-    ]
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var newDom = [
-  [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [] ]
-]
-var diff = compare(oldDom, newDom);
-console.log(
-  "deletion", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    [
-      [ ".0", "destroy", "#1" ]
-    ]
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var newDom = [
-  [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [
-      [ "#3", "mini-rect", { foo: "bar" } ] 
-    ]
-  ]
-]
-var diff = compare(oldDom, newDom);
-console.log(
-  "creating a nested node", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    [
-      [ ".0.0", "create", "#3", "mini-rect", { foo: "bar" } ]
-    ]
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var newDom = [
-  [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [
-      [ "#3", "mini-rect", { foo: "baz" } ] 
-    ]
-  ]
-]
-var diff = compare(oldDom, newDom);
-console.log(
-  "updating a nested node", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    [
-      [ ".0.0", "update", "#3", { foo: "baz" } ]
-    ]
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var diff = compare(oldDom, newDom);
-console.log(
-  "same", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    []
-  )
-);
-
-var oldDom = $.extend(true, [], newDom);
-var newDom = [
-  [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [] ]
-]
-var diff = compare(oldDom, newDom);
-console.log(
-  "deleting a nested node", diff,
-  JSON.stringify(diff) === JSON.stringify(
-    [
-      [ ".0.0", "destroy", "#3" ]
-    ]
-  )
-);
+// var oldDom = [];
+// var newDom = [
+//   [ "#1", "line", { x1: 40, y1: 40, x2: 60, y2: 60 }, [] ]
+// ];
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "zero to initial", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     [[ ".0", "create", "#1", "line", { x1: 40, y1: 40, x2: 60, y2: 60 } ]]
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var newDom = [
+//   [ "#1", "line", { x1: 40, y1: 40, x2: 70, y2: 60 }, [] ]
+// ]
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "update", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     [[ ".0", "update", "#1", { x2: 70 } ]]
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "same", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     []
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var newDom = [
+//   [ "#1", "line", { x1: 0, y1: 0, x2: 0, y2: 60 }, [] ]
+// ]
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "big update", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     [[ ".0", "update", "#1", { x1: 0, y1: 0, x2: 0 } ]]
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var newDom = [
+//   [ "#1", "line", { x1: 0, y1: 0, x2: 0, y2: 60 }, [] ],
+//   [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [] ]
+// ]
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "addition", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     [
+//       [ ".1", "create", "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 } ]
+//     ]
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var newDom = [
+//   [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [] ]
+// ]
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "deletion", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     [
+//       [ ".0", "destroy", "#1" ]
+//     ]
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var newDom = [
+//   [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [
+//       [ "#3", "mini-rect", { foo: "bar" } ] 
+//     ]
+//   ]
+// ]
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "creating a nested node", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     [
+//       [ ".0.0", "create", "#3", "mini-rect", { foo: "bar" } ]
+//     ]
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var newDom = [
+//   [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [
+//       [ "#3", "mini-rect", { foo: "baz" } ] 
+//     ]
+//   ]
+// ]
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "updating a nested node", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     [
+//       [ ".0.0", "update", "#3", { foo: "baz" } ]
+//     ]
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "same", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     []
+//   )
+// );
+// 
+// var oldDom = $.extend(true, [], newDom);
+// var newDom = [
+//   [ "#2", "rect", { x1: 40, y1: 30, x2: 0, y2: 60 }, [] ]
+// ]
+// var diff = compare(oldDom, newDom);
+// console.log(
+//   "deleting a nested node", diff,
+//   JSON.stringify(diff) === JSON.stringify(
+//     [
+//       [ ".0.0", "destroy", "#3" ]
+//     ]
+//   )
+// );
