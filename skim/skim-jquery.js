@@ -1,0 +1,3 @@
+function SkimJQuery(Skim, $) {
+  return {  }
+}
